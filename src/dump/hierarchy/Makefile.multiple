@@ -1,0 +1,86 @@
+progs = parser hello
+srcdir = src
+objdir = src
+bindir = build
+
+srcfiles = $(addprefix $(srcdir)/, $(progs))
+cppfiles = $(addsuffix .cpp, $(srcfiles))
+hppfiles = $(addsuffix .h, $(srcfiles))
+objfiles = $(patsubst %.cpp,%.o, $(cppfiles))
+binfiles = $(addprefix $(bindir)/, $(progs))
+
+LLVM_SRC_PATH := /home/tsemach/install/llvm
+LLVM_BUILD_PATH := /home/tsemach/install/llvm/build
+LLVM_BIN_PATH := $(LLVM_BUILD_PATH)/bin
+LLVM_LDFLAGS_NOLIBS := `$(LLVM_BIN_PATH)/llvm-config --ldflags`
+CLANG_INCLUDES := -I$(LLVM_SRC_PATH)/tools/clang/include -I$(LLVM_BUILD_PATH)/tools/clang/include
+ 
+CC=g++
+CCFLAGS=-std=c++11 -fno-rtti -O0 -g
+LLVM_CXXFLAGS := `$(LLVM_BIN_PATH)/llvm-config --cxxflags`
+LLVM_LDFLAGS := `$(LLVM_BIN_PATH)/llvm-config --ldflags --libs --system-libs`
+
+CPPFLAGS = $(CCFLAGS) $(LLVM_CXXFLAGS) $(CLANG_INCLUDES) 
+
+CLANG_LIBS_LIST := \
+	clangAST \
+	clangASTMatchers \
+	clangAnalysis \
+	clangBasic \
+	clangDriver \
+	clangEdit \
+	clangFrontend \
+	clangFrontendTool \
+	clangLex \
+	clangParse \
+	clangSema \
+	clangEdit \
+	clangRewrite \
+	clangRewriteFrontend \
+	clangStaticAnalyzerFrontend \
+	clangStaticAnalyzerCheckers \
+	clangStaticAnalyzerCore \
+	clangSerialization \
+	clangToolingCore \
+	clangTooling \
+	clangFormat
+
+CLANG_LIBS = -Wl,--start-group $(addprefix -l, $(CLANG_LIBS_LIST)) -Wl,--end-group
+
+.PHONY: all
+all: builddir $(binfiles)
+
+builddir:
+	@test -d $(bindir) || mkdir $(bindir)
+
+%.o: %.cpp %.h
+	$(CC) -c -std=c++11 $(CPPFLAGS) $(filter %.cpp,$<) -o $@
+
+define progs_template =
+$(bindir)/$(1): $(objdir)/$(value 1).o
+endef
+
+$(foreach prog,$(progs),$(eval $(call progs_template,$(prog))))
+
+#$(bindir)/parser: $(objdir)/parser.o
+#$(bindir)/hello: $(objdir)/hello.o
+
+$(binfiles): 
+	$(CC) $(CPPFLAGS) $(findstring $(objdir)/$(notdir $@).o, $(objfiles)) $(CLANG_LIBS) $(LLVM_LDFLAGS) -o $@ $(CCFLAGS)
+
+.PHONY: info
+info:
+	$(info ----------------------------------------------)
+	$(info progs = $(value progs))
+	$(info srcfiles = $(srcfiles))
+	$(info cppfiles = $(cppfiles))
+	$(info hppfiles = $(hppfiles))
+	$(info objfiles = $(objfiles))
+	$(info binfiles = $(binfiles))
+	$(info ----------------------------------------------)
+
+clean:
+	@rm -f $(objfiles) $(binfiles)
+	@rm -rf $(bindir)
+
+

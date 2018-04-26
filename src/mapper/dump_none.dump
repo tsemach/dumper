@@ -1,0 +1,31 @@
+
+// this file describe how to dump class CNone
+version(1.0)
+
+class CNone {
+constctor:
+	- CNone(1234); 					// call this constractor when loading
+	& CNone::instance()				// call this static method to return a reference to the class when loading
+	* new repository.get("CNone")	// call this static method to return a pointer to the class when loading
+
+access:
+	getter of x_none is getX();		// call to getX() to get n_none;
+	setter of x_none is setX();		// call to setX() to get n_none;
+	access of x_none is X();		// call to getX(), setX() to get/set n_none;
+	access of x_none is by name;	// call to none() to get x_none and to node(int &) to set x_none;
+
+members:
+	list of members to dump/local
+	if not exist the all members are dump/load
+	for example:
+		std::string m_name;
+		u_int		m_id;	
+
+ignore:
+	ignore those members
+
+files:
+	dump cnone.dump;	// by default the file is "CNone.dump"
+};
+
+

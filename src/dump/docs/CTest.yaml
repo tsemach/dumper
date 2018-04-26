@@ -1,0 +1,28 @@
+---
+version: 1.0
+class: 
+    name: CTest
+    namespace: dump
+    constructor: 
+        - CTest(1234)
+        - \& CTest::install()     # construct by calling to same singleton return by reference
+        - \* CTest::create()      # construct by calling to same singleton return by pointer
+    access:
+        getter: m_id is getX();       # call this getter to get m_id value during dumping
+        setter: m_name is setName();  # call this setter to set m_name during loading
+        access: m_index is X();       # call this getX() / setX() to get and set during dumping and loading
+        access: m_name by name;       # call to name() and name(const std::string &) to get and set m_name.
+
+members:
+    # list of members to dump / load
+    - m_name: std::string 
+    - m_id: u_int
+
+ignore:
+    - m_name
+    - m_id
+
+files:
+    dump: CTest.dump
+    load: CTest.load
+...

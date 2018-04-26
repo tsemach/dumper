@@ -1,0 +1,16 @@
+{
+	"class": "CNone",
+	"version": "1.0",
+	"members": [
+		{
+			"name": "m_name",
+			"type": "std::string",
+			"value": "Tsemac is the name"
+		},
+		{
+			"name": "m_id",
+            "type": "u_int",
+            "value": 1
+		}
+	]
+}

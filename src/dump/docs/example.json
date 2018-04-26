@@ -1,0 +1,29 @@
+{
+  "version" : "1.0",
+  "decl": "Record",        		   
+  "type" : "CNone",
+  "members" : [
+		{
+    	"name": "m_name",		   		
+      "type" : "std::string",
+      "value" : "Tsemach is the name"
+		},
+		{
+			"name":	"m_id",
+      "type" : "u_int",
+      "value" : 300
+		},
+		{
+			"name": "m_data",
+      "decl": "Record",
+      "type": "CData"
+			"members": [
+				{
+					"name": "m_member_of_data",
+					"type": "int",
+					"value": "1"
+				}
+			]
+    }
+  }
+}
